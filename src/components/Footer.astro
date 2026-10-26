@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { navigation } from '../data/navigation';
-import { site, areasLabel, phones, whatsappHref } from '../config/site';
+import { site, areasLabel, phones } from '../config/site';
 
 interface Props {
   base?: string;
@@ -10,7 +10,6 @@ interface Props {
 
 const { base = '' } = Astro.props;
 const year = new Date().getFullYear();
-const whatsapp = whatsappHref();
 const socials = [
   { href: site.contact.instagram, label: 'Instagram', icon: 'instagram' },
   { href: site.contact.facebook, label: 'Facebook', icon: 'facebook' },
@@ -48,12 +47,23 @@ const legalLine = [site.legal.companyName, site.legal.address, site.legal.vatNum
         </ul>
       </div>
 
-      {(phones.length > 0 || whatsapp || site.contact.email || socials.some((s) => s.href)) && (
+      {(phones.length > 0 || site.contact.email || socials.some((s) => s.href)) && (
         <div>
           <h2 class="site-footer__title">Contatti</h2>
           <ul>
-            {phones.map((phone) => <li><a href={phone.href}>{phone.number}</a></li>)}
-            {whatsapp && <li><a href={whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>}
+            {phones.map((phone) => (
+              <li>
+                <a href={phone.href}>{phone.number}</a>
+                {phone.whatsapp && (
+                  <>
+                    <span aria-hidden="true"> · </span>
+                    <a href={phone.whatsapp} target="_blank" rel="noopener" aria-label={`WhatsApp al ${phone.number}`}>
+                      WhatsApp
+                    </a>
+                  </>
+                )}
+              </li>
+            ))}
             {site.contact.email && <li><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></li>}
             {socials.filter((s) => s.href).map((s) => (
               <li>

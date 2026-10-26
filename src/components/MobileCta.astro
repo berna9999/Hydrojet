@@ -4,17 +4,14 @@
  * quando il modulo preventivo è già visibile.
  */
 import Icon from './Icon.astro';
-import { phones, whatsappHref } from '../config/site';
+import { phones, mainWhatsapp } from '../config/site';
 
-const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
+const whatsapp = mainWhatsapp;
 const mainPhone = phones[0];
 ---
 
 <div class="mobile-cta" data-mobile-cta hidden>
-  <a class="btn btn--block" href="#preventivo">
-    Richiedi un preventivo
-    <Icon name="arrow-right" class="icon-arrow" />
-  </a>
+  <a class="btn btn--block mobile-cta__main" href="#preventivo">Richiedi preventivo</a>
   {mainPhone && (
     <a class="mobile-cta__call" href={mainPhone.href} aria-label={`Chiama ${mainPhone.number}`}>
       <Icon name="phone" size={22} />
@@ -43,6 +40,12 @@ const mainPhone = phones[0];
     border-top: 1px solid var(--line);
     transform: translateY(110%);
     transition: transform 0.35s var(--ease);
+  }
+
+  .mobile-cta__main {
+    min-width: 0;
+    padding-inline: 1rem;
+    white-space: nowrap;
   }
 
   .mobile-cta[data-visible] {

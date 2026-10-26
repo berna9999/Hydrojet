@@ -1,9 +1,7 @@
 ---
 import Icon from './Icon.astro';
-import { site, phones, whatsappHref, hasDirectContact, areasLabel } from '../config/site';
+import { site, phones, hasDirectContact, areasLabel } from '../config/site';
 import { LIMITS } from '../lib/quote';
-
-const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
 
 const tips = [
   'Che superficie è e, se lo sai, di che materiale',
@@ -26,24 +24,32 @@ const tips = [
       {hasDirectContact && (
         <ul class="direct">
           {phones.map((phone) => (
-            <li>
-              <a href={phone.href}>
+            <li class="direct__card">
+              <div class="direct__head">
                 <span class="direct__icon"><Icon name="phone" size={20} /></span>
-                <span><small>Telefono</small>{phone.number}</span>
-              </a>
+                <span><small>{phone.whatsapp ? 'Telefono e WhatsApp' : 'Telefono'}</small>{phone.number}</span>
+              </div>
+              <div class="direct__actions">
+                <a class="direct__btn" href={phone.href} aria-label={`Chiama il ${phone.number}`}>
+                  <Icon name="phone" size={18} /> Chiama
+                </a>
+                {phone.whatsapp && (
+                  <a
+                    class="direct__btn direct__btn--wa"
+                    href={phone.whatsapp}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`Scrivi su WhatsApp al ${phone.number}`}
+                  >
+                    <Icon name="whatsapp" size={18} /> WhatsApp
+                  </a>
+                )}
+              </div>
             </li>
           ))}
-          {whatsapp && (
-            <li>
-              <a href={whatsapp} target="_blank" rel="noopener">
-                <span class="direct__icon direct__icon--wa"><Icon name="whatsapp" size={20} /></span>
-                <span><small>WhatsApp</small>{site.contact.whatsapp}</span>
-              </a>
-            </li>
-          )}
           {site.contact.email && (
             <li>
-              <a href={`mailto:${site.contact.email}`}>
+              <a class="direct__card direct__head" href={`mailto:${site.contact.email}`}>
                 <span class="direct__icon"><Icon name="mail" size={20} /></span>
                 <span><small>Email</small>{site.contact.email}</span>
               </a>
@@ -205,10 +211,7 @@ const tips = [
     list-style: none;
   }
 
-  .direct a {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  .direct__card {
     padding: 0.875rem 1rem;
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -219,9 +222,54 @@ const tips = [
     transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
   }
 
-  .direct a:hover {
+  a.direct__card:hover {
     border-color: var(--blue-200);
     box-shadow: var(--shadow-sm);
+  }
+
+  .direct__head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .direct__actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+  }
+
+  .direct__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--blue-700);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  .direct__btn:hover {
+    background: var(--blue-50);
+    border-color: var(--blue-200);
+  }
+
+  .direct__btn--wa {
+    border-color: transparent;
+    background: #e7f8ee;
+    color: #0b6b38;
+  }
+
+  .direct__btn--wa:hover {
+    background: #d3f2df;
+    border-color: transparent;
   }
 
   .direct small {
@@ -240,11 +288,6 @@ const tips = [
     border-radius: 999px;
     background: var(--blue-100);
     color: var(--blue-700);
-  }
-
-  .direct__icon--wa {
-    background: #e7f8ee;
-    color: #128c4b;
   }
 
   .tips {
@@ -551,7 +594,7 @@ const tips = [
 
 <script>
   import { readQuote, validateQuote, type FieldErrors } from '../lib/quote';
-  import { phones, whatsappHref, site } from '../config/site';
+  import { phones, mainWhatsapp, site } from '../config/site';
 
   const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
@@ -569,8 +612,7 @@ const tips = [
     if (phones.length) {
       links.push(`chiamarci al ${phones.map((p) => `<a href="${p.href}">${p.number}</a>`).join(' o al ')}`);
     }
-    const wa = whatsappHref();
-    if (wa) links.push(`<a href="${wa}" target="_blank" rel="noopener">scriverci su WhatsApp</a>`);
+    if (mainWhatsapp) links.push(`<a href="${mainWhatsapp}" target="_blank" rel="noopener">scriverci su WhatsApp</a>`);
     if (site.contact.email) links.push(`scriverci a <a href="mailto:${site.contact.email}">${site.contact.email}</a>`);
     return links.length ? ` In alternativa puoi ${links.join(' oppure ')}.` : ' Riprova più tardi.';
   };

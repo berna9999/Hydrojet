@@ -2,11 +2,11 @@
 import { Picture } from 'astro:assets';
 import Icon from './Icon.astro';
 import markSvg from '../assets/brand/hydrojet-mark.svg?raw';
-import { site, areasLabel, phones, whatsappHref } from '../config/site';
+import { site, areasLabel, phones } from '../config/site';
 import { projects } from '../data/projects';
 
 const featured = projects[0];
-const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
+const anyWhatsapp = phones.some((phone) => phone.whatsapp);
 ---
 
 <section class="hero on-dark" id="top" aria-labelledby="hero-title">
@@ -31,14 +31,28 @@ const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una puliz
         <a class="btn btn--outline-light" href="#risultati">Guarda prima e dopo</a>
       </div>
 
-      {(phones.length > 0 || whatsapp) && (
-        <p class="hero__direct">
-          <span>Preferisci parlarci subito? Chiamaci:</span>
-          {phones.map((phone) => (
-            <a href={phone.href}><Icon name="phone" size={16} /> {phone.number}</a>
-          ))}
-          {whatsapp && <a href={whatsapp} target="_blank" rel="noopener">Scrivici su WhatsApp</a>}
-        </p>
+      {phones.length > 0 && (
+        <div class="hero__direct">
+          <p>Preferisci parlarci subito? Chiamaci{anyWhatsapp && ' o scrivici su WhatsApp'}:</p>
+          <ul>
+            {phones.map((phone) => (
+              <li>
+                <a href={phone.href}><Icon name="phone" size={16} /> {phone.number}</a>
+                {phone.whatsapp && (
+                  <a
+                    class="hero__wa"
+                    href={phone.whatsapp}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`Scrivi su WhatsApp al ${phone.number}`}
+                  >
+                    <Icon name="whatsapp" size={18} />
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <ul class="hero__facts">
@@ -151,17 +165,24 @@ const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una puliz
   }
 
   .hero__direct {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.25rem 1.25rem;
     margin-top: 1.25rem;
     font-size: 0.9375rem;
     color: rgb(255 255 255 / 0.7);
   }
 
-  .hero__direct span {
-    flex-basis: 100%;
+  .hero__direct ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__direct li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .hero__direct a {
@@ -181,6 +202,15 @@ const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una puliz
 
   .hero__direct :global(svg) {
     color: var(--blue-300);
+  }
+
+  .hero__direct .hero__wa {
+    justify-content: center;
+    width: 2.75rem;
+  }
+
+  .hero__direct .hero__wa :global(svg) {
+    color: #4ade80;
   }
 
   .hero__facts {
