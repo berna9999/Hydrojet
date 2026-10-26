@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { site, phones, hasDirectContact, areasLabel } from '../config/site';
+import { site, phones, hasDirectContact, areasLabel, instagramHandle } from '../config/site';
 import { LIMITS } from '../lib/quote';
 
 const tips = [
@@ -52,6 +52,14 @@ const tips = [
               <a class="direct__card direct__head" href={`mailto:${site.contact.email}`}>
                 <span class="direct__icon"><Icon name="mail" size={20} /></span>
                 <span><small>Email</small>{site.contact.email}</span>
+              </a>
+            </li>
+          )}
+          {site.contact.instagram && (
+            <li>
+              <a class="direct__card direct__head" href={site.contact.instagram} target="_blank" rel="noopener">
+                <span class="direct__icon direct__icon--ig"><Icon name="instagram" size={20} /></span>
+                <span><small>Instagram</small>{instagramHandle}</span>
               </a>
             </li>
           )}
@@ -265,6 +273,11 @@ const tips = [
     border-color: transparent;
     background: #e7f8ee;
     color: #0b6b38;
+  }
+
+  .direct__icon.direct__icon--ig {
+    background: #fdecf3;
+    color: #b0306a;
   }
 
   .direct__btn--wa:hover {

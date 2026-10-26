@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { navigation } from '../data/navigation';
-import { site, areasLabel, phones } from '../config/site';
+import { site, areasLabel, phones, instagramHandle } from '../config/site';
 
 interface Props {
   base?: string;
@@ -11,7 +11,7 @@ interface Props {
 const { base = '' } = Astro.props;
 const year = new Date().getFullYear();
 const socials = [
-  { href: site.contact.instagram, label: 'Instagram', icon: 'instagram' },
+  { href: site.contact.instagram, label: instagramHandle || 'Instagram', icon: 'instagram' },
   { href: site.contact.facebook, label: 'Facebook', icon: 'facebook' },
 ] as const;
 const legalLine = [site.legal.companyName, site.legal.address, site.legal.vatNumber && `P. IVA ${site.legal.vatNumber}`]

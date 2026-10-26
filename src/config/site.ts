@@ -9,7 +9,7 @@ export const site = {
   name: 'HydroJet',
   /** Breve descrizione usata in meta description e anteprime social. */
   description:
-    'HydroJet: pulizia con idropulitrice a Pesaro e Cattolica. Guarda un lavoro reale prima e dopo e richiedi un preventivo.',
+    'HydroJet: pulizia con idropulitrice di muri esterni, vialetti, patio, pavimentazioni e giardini a Pesaro e Cattolica. Guarda un lavoro reale e richiedi un preventivo.',
   locale: 'it_IT',
 
   /** Zona di copertura: non aggiungere località non confermate. */
@@ -27,7 +27,7 @@ export const site = {
     /** Email pubblica, es. 'info@hydrojet.it'. */
     email: 'hydrojet026@gmail.com',
     /** URL completo del profilo Instagram, es. 'https://www.instagram.com/hydrojet'. */
-    instagram: '',
+    instagram: 'https://www.instagram.com/hydroj3t/',
     /** URL completo della pagina Facebook. */
     facebook: '',
   },
@@ -67,6 +67,11 @@ export const phones = site.contact.phones
 export const mainWhatsapp = phones.find((phone) => phone.whatsapp)?.whatsapp ?? '';
 
 export const hasDirectContact = Boolean(phones.length > 0 || site.contact.email);
+
+/** Nome utente Instagram ricavato dall'URL, es. "@hydroj3t". */
+export const instagramHandle = site.contact.instagram
+  ? `@${site.contact.instagram.split('/').filter(Boolean).pop()}`
+  : '';
 
 /** Elenco leggibile delle zone, es. "Pesaro e Cattolica". */
 export const areasLabel = new Intl.ListFormat('it', { style: 'long', type: 'conjunction' }).format(
