@@ -1,0 +1,164 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { navigation } from '../data/navigation';
+import { site, areasLabel, phoneHref, whatsappHref } from '../config/site';
+
+interface Props {
+  base?: string;
+}
+
+const { base = '' } = Astro.props;
+const year = new Date().getFullYear();
+const whatsapp = whatsappHref();
+const socials = [
+  { href: site.contact.instagram, label: 'Instagram', icon: 'instagram' },
+  { href: site.contact.facebook, label: 'Facebook', icon: 'facebook' },
+] as const;
+const legalLine = [site.legal.companyName, site.legal.address, site.legal.vatNumber && `P. IVA ${site.legal.vatNumber}`]
+  .filter(Boolean)
+  .join(' · ');
+---
+
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <Logo href={base ? '/' : '#top'} />
+        <p>Pulizia con idropulitrice a {areasLabel}.</p>
+        <a class="btn btn--light btn--sm" href={`${base}#preventivo`}>
+          Richiedi un preventivo
+          <Icon name="arrow-right" class="icon-arrow" />
+        </a>
+      </div>
+
+      <nav aria-label="Link del footer">
+        <h2 class="site-footer__title">Sezioni</h2>
+        <ul>
+          {navigation.map((item) => (
+            <li><a href={`${base}${item.href}`}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="site-footer__title">Zona di lavoro</h2>
+        <ul>
+          {site.areas.map((area) => <li>{area}</li>)}
+        </ul>
+      </div>
+
+      {(phoneHref || whatsapp || site.contact.email || socials.some((s) => s.href)) && (
+        <div>
+          <h2 class="site-footer__title">Contatti</h2>
+          <ul>
+            {phoneHref && <li><a href={phoneHref}>{site.contact.phone}</a></li>}
+            {whatsapp && <li><a href={whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>}
+            {site.contact.email && <li><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></li>}
+            {socials.filter((s) => s.href).map((s) => (
+              <li>
+                <a class="site-footer__social" href={s.href} target="_blank" rel="noopener">
+                  <Icon name={s.icon} size={18} /> {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© {year} {site.name}{legalLine && ` · ${legalLine}`}</p>
+      <a href="/privacy">Informativa privacy</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(3.5rem, 7vw, 5rem) 2rem;
+    background: var(--navy-950);
+    color: rgb(255 255 255 / 0.7);
+    font-size: 0.9375rem;
+  }
+
+  .site-footer a:not(.btn) {
+    color: rgb(255 255 255 / 0.85);
+    text-decoration: none;
+  }
+
+  .site-footer a:not(.btn):hover {
+    color: var(--white);
+    text-decoration: underline;
+  }
+
+  .site-footer :global(.logo) {
+    color: var(--white);
+  }
+
+  .site-footer__top {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .site-footer__brand p {
+    margin: 1rem 0 1.5rem;
+    max-width: 22rem;
+  }
+
+  .site-footer__title {
+    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue-300);
+  }
+
+  .site-footer ul {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer li a {
+    display: inline-block;
+    padding-block: 0.2rem;
+  }
+
+  .site-footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.875rem;
+    color: rgb(255 255 255 / 0.6);
+  }
+
+  @media (min-width: 720px) {
+    .site-footer__top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem 3rem;
+    }
+
+    .site-footer__top > * {
+      flex: 1 1 9rem;
+    }
+
+    .site-footer__top > .site-footer__brand {
+      flex: 2 1 18rem;
+    }
+  }
+</style>

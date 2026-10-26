@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TextPage from '../components/TextPage.astro';
+import { site } from '../config/site';
+
+const controller = [site.legal.companyName || site.name, site.legal.address, site.legal.vatNumber && `P. IVA ${site.legal.vatNumber}`]
+  .filter(Boolean)
+  .join(', ');
+---
+
+<BaseLayout
+  title={`Informativa privacy | ${site.name}`}
+  description={`Come ${site.name} tratta i dati inviati tramite il modulo di richiesta preventivo.`}
+  base="/"
+>
+  <TextPage eyebrow="Privacy" title="Informativa sul trattamento dei dati">
+    <h2>Chi tratta i dati</h2>
+    <p>
+      Titolare del trattamento è {controller}.
+      {site.contact.email && (
+        <>Per qualsiasi richiesta puoi scrivere a <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.</>
+      )}
+    </p>
+
+    <h2>Quali dati raccogliamo</h2>
+    <p>
+      Raccogliamo solo i dati che inserisci nel modulo di richiesta preventivo: nome, numero di telefono e/o
+      indirizzo email, località e descrizione del lavoro.
+    </p>
+
+    <h2>Perché li usiamo</h2>
+    <p>
+      Usiamo i dati esclusivamente per rispondere alla tua richiesta e preparare un preventivo. La base giuridica è
+      l’esecuzione di misure precontrattuali adottate su tua richiesta (art. 6, par. 1, lett. b del Regolamento UE
+      2016/679, «GDPR»). Non usiamo i dati per invii pubblicitari e non li cediamo a terzi.
+    </p>
+
+    <h2>Come vengono trattati</h2>
+    <p>
+      Il sito è ospitato da Vercel Inc. e i messaggi del modulo ci vengono recapitati via email tramite il servizio
+      Resend: questi fornitori trattano i dati per nostro conto, solo per erogare il servizio. Alcuni fornitori
+      possono avere sede o server fuori dall’Unione europea; in tal caso il trasferimento avviene nel rispetto delle
+      garanzie previste dal GDPR.
+    </p>
+
+    <h2>Per quanto tempo</h2>
+    <p>
+      Conserviamo i dati per il tempo necessario a gestire la richiesta e l’eventuale rapporto che ne deriva, oltre
+      che per gli obblighi di legge eventualmente applicabili.
+    </p>
+
+    <h2>I tuoi diritti</h2>
+    <p>
+      Puoi chiedere in qualsiasi momento l’accesso ai tuoi dati, la rettifica, la cancellazione, la limitazione del
+      trattamento, la portabilità o opporti al trattamento, contattandoci ai recapiti indicati su questo sito o
+      rispondendo ai nostri messaggi. Hai inoltre diritto di proporre reclamo al Garante per la protezione dei dati
+      personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>).
+    </p>
+
+    <h2>Cookie</h2>
+    <p>
+      Questo sito non utilizza cookie di profilazione né strumenti di statistica o tracciamento. I caratteri
+      tipografici sono ospitati direttamente sul sito, senza collegamenti a servizi esterni.
+    </p>
+  </TextPage>
+</BaseLayout>

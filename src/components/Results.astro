@@ -1,0 +1,107 @@
+---
+import BeforeAfter from './BeforeAfter.astro';
+import Icon from './Icon.astro';
+import { projects } from '../data/projects';
+---
+
+<section class="section results" id="risultati" aria-labelledby="results-title">
+  <div class="container">
+    <header class="results__head">
+      <p class="eyebrow">Risultati reali</p>
+      <h2 class="h2" id="results-title">Un nostro lavoro, prima e dopo.</h2>
+      <p class="lead">
+        Niente immagini di repertorio: qui trovi le foto originali di un intervento eseguito da noi.
+        Toccale per ingrandirle e guardare i dettagli.
+      </p>
+    </header>
+
+    {projects.map((project) => (
+      <article class="project" aria-labelledby={`project-${project.id}`}>
+        <div class="project__info">
+          <span class="project__surface">{project.surface}</span>
+          <h3 id={`project-${project.id}`}>{project.title}</h3>
+          <p>{project.description}</p>
+          {project.photoNote && <p class="project__note">{project.photoNote}</p>}
+          <a class="btn btn--outline" href="#preventivo">
+            Hai una superficie simile da pulire?
+            <Icon name="arrow-right" class="icon-arrow" />
+          </a>
+        </div>
+        <div class="project__media">
+          <BeforeAfter project={project} />
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .results {
+    background: var(--surface);
+  }
+
+  .results__head {
+    max-width: 44rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .results__head .lead {
+    margin-top: 1.25rem;
+  }
+
+  .project {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .project + .project {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding-top: clamp(3rem, 6vw, 5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .project__surface {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .project__info h3 {
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+
+  .project__info p {
+    margin-top: 0.875rem;
+  }
+
+  .project__note {
+    padding-left: 0.875rem;
+    border-left: 2px solid var(--blue-200);
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .project__info .btn {
+    margin-top: 1.75rem;
+  }
+
+  /* Su smartphone le foto vengono prima del testo. */
+  @media (max-width: 1023px) {
+    .project__media {
+      order: -1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+      gap: 4rem;
+    }
+  }
+</style>

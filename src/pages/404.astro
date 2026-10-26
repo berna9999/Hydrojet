@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TextPage from '../components/TextPage.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout title={`Pagina non trovata | ${site.name}`} base="/" noindex>
+  <TextPage
+    eyebrow="Errore 404"
+    title="Questa pagina non esiste."
+    intro="Il link potrebbe essere errato o la pagina è stata spostata."
+  >
+    <a class="btn" href="/">
+      Torna alla home
+      <Icon name="arrow-right" class="icon-arrow" />
+    </a>
+  </TextPage>
+</BaseLayout>

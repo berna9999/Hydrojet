@@ -1,0 +1,18 @@
+# build
+dist/
+.astro/
+.vercel/
+.work/
+
+# dipendenze
+node_modules/
+
+# ambiente (non committare mai le chiavi)
+.env
+.env.*
+!.env.example
+
+# log e sistema
+npm-debug.log*
+.DS_Store
+Thumbs.db

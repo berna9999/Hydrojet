@@ -1,0 +1,255 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import markSvg from '../assets/brand/hydrojet-mark.svg?raw';
+import { site, areasLabel, phoneHref, whatsappHref } from '../config/site';
+import { projects } from '../data/projects';
+
+const featured = projects[0];
+const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
+---
+
+<section class="hero on-dark" id="top" aria-labelledby="hero-title">
+  <span class="hero__watermark" aria-hidden="true" set:html={markSvg} />
+
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Pulizia con idropulitrice · {areasLabel}</p>
+      <h1 id="hero-title" class="hero__title">
+        Ridiamo pulizia <span>alle tue superfici.</span>
+      </h1>
+      <p class="hero__lead">
+        Siamo {site.name}: due ragazzi che si occupano di pulizia con idropulitrice a {areasLabel}.
+        Raccontaci cosa c’è da pulire, valutiamo il lavoro e ti mandiamo un preventivo.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--light" href="#preventivo">
+          Richiedi un preventivo
+          <Icon name="arrow-right" class="icon-arrow" />
+        </a>
+        <a class="btn btn--outline-light" href="#risultati">Guarda prima e dopo</a>
+      </div>
+
+      {(phoneHref || whatsapp) && (
+        <p class="hero__direct">
+          Preferisci parlarci subito?
+          {phoneHref && <a href={phoneHref}>Chiama {site.contact.phone}</a>}
+          {phoneHref && whatsapp && <span aria-hidden="true"> · </span>}
+          {whatsapp && <a href={whatsapp} target="_blank" rel="noopener">Scrivici su WhatsApp</a>}
+        </p>
+      )}
+
+      <ul class="hero__facts">
+        <li><Icon name="map-pin" size={20} /> Operiamo a {areasLabel}</li>
+        <li><Icon name="users" size={20} /> Parli direttamente con noi</li>
+        <li><Icon name="camera" size={20} /> Foto di lavori reali</li>
+      </ul>
+    </div>
+
+    {featured && (
+      <a class="hero__proof" href="#risultati" aria-label={`Vedi il lavoro: ${featured.title}, prima e dopo`}>
+        <figure class="hero__panel">
+          <Picture
+            src={featured.before.src}
+            alt=""
+            formats={['avif', 'webp']}
+            widths={[280, 420, 560]}
+            sizes="(min-width: 1024px) 260px, 45vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <figcaption class="tag">Prima</figcaption>
+        </figure>
+        <figure class="hero__panel">
+          <Picture
+            src={featured.after.src}
+            alt=""
+            formats={['avif', 'webp']}
+            widths={[280, 420, 560]}
+            sizes="(min-width: 1024px) 260px, 45vw"
+            loading="eager"
+          />
+          <figcaption class="tag tag--light">Dopo</figcaption>
+        </figure>
+        <span class="hero__proof-caption">
+          <span>Lavoro reale · {featured.surface}</span>
+          <Icon name="arrow-down" size={18} />
+        </span>
+      </a>
+    )}
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--white);
+    background:
+      radial-gradient(70% 60% at 85% 10%, rgb(14 98 160 / 0.55), transparent 70%),
+      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+    padding-block: clamp(2.5rem, 6vw, 5.5rem) clamp(3.5rem, 7vw, 6rem);
+  }
+
+  .hero__watermark {
+    position: absolute;
+    z-index: -1;
+    left: -14rem;
+    bottom: -12rem;
+    width: 46rem;
+    color: var(--white);
+    opacity: 0.035;
+    pointer-events: none;
+  }
+
+  .hero__watermark :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .hero__title {
+    color: var(--white);
+    font-size: clamp(2.6rem, 1.4rem + 5.2vw, 5rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
+  .hero__title span {
+    display: block;
+    color: var(--blue-300);
+  }
+
+  .hero__lead {
+    max-width: 34rem;
+    margin-top: 1.5rem;
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 479px) {
+    .hero__actions .btn {
+      width: 100%;
+    }
+  }
+
+  .hero__direct {
+    margin-top: 1.25rem;
+    font-size: 0.9375rem;
+    color: rgb(255 255 255 / 0.7);
+  }
+
+  .hero__direct a {
+    margin-left: 0.25rem;
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .hero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 2.5rem 0 0;
+    padding: 1.5rem 0 0;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    list-style: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .hero__facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero__facts :global(svg) {
+    color: var(--blue-300);
+  }
+
+  /* Anteprima prima/dopo */
+  .hero__proof {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-lg);
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    box-shadow: var(--shadow-lg);
+    color: var(--white);
+    text-decoration: none;
+    transition: transform 0.35s var(--ease), border-color 0.35s var(--ease);
+  }
+
+  @media (min-width: 560px) and (max-width: 1023px) {
+    .hero__proof {
+      max-width: 32rem;
+    }
+  }
+
+  .hero__proof:hover {
+    transform: translateY(-4px);
+    border-color: rgb(255 255 255 / 0.22);
+  }
+
+  .hero__panel {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: calc(var(--radius-lg) - 0.5rem);
+    aspect-ratio: 3 / 4;
+    background: var(--blue-800);
+  }
+
+  .hero__panel :global(picture) {
+    height: 100%;
+  }
+
+  .hero__panel :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero__panel .tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .hero__proof-caption {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.5rem 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+  }
+</style>

@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Results from '../components/Results.astro';
+import Services from '../components/Services.astro';
+import Process from '../components/Process.astro';
+import Coverage from '../components/Coverage.astro';
+import Contact from '../components/Contact.astro';
+import MobileCta from '../components/MobileCta.astro';
+---
+
+<BaseLayout structuredData>
+  <Hero />
+  <Results />
+  <Services />
+  <Process />
+  <Coverage />
+  <Contact />
+  <MobileCta slot="after-footer" />
+</BaseLayout>

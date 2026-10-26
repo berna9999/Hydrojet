@@ -1,0 +1,192 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+import { projects } from '../data/projects';
+
+const projectFor = (id?: string) => projects.find((project) => project.id === id);
+---
+
+<section class="section services" id="servizi" aria-labelledby="services-title">
+  <div class="container services__grid">
+    <header class="services__head">
+      <p class="eyebrow">Servizi</p>
+      <h2 class="h2" id="services-title">Cosa possiamo pulire per te.</h2>
+      <p class="lead">
+        Usiamo l'idropulitrice per rimuovere sporco, macchie e depositi. Qui trovi i lavori che abbiamo già
+        documentato; per altre superfici, raccontaci cosa ti serve e ti diremo se possiamo intervenire.
+      </p>
+    </header>
+
+    <ul class="services__list">
+      {services.map((service, index) => {
+        const project = projectFor(service.projectId);
+        return (
+        <li class="service">
+          {project && (
+            <figure class="service__media">
+              <Picture
+                src={project.after.src}
+                alt={project.after.alt}
+                formats={['avif', 'webp']}
+                widths={[480, 720, 960]}
+                sizes="(min-width: 1024px) 520px, 92vw"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption class="tag tag--light">Lavoro reale</figcaption>
+            </figure>
+          )}
+          <span class="service__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{service.title}</h3>
+            <p>{service.description}</p>
+            {service.projectId && (
+              <a class="service__link" href="#risultati">
+                Guarda il lavoro prima e dopo
+                <Icon name="arrow-right" size={18} />
+              </a>
+            )}
+          </div>
+        </li>
+        );
+      })}
+
+      <li class="service service--open">
+        <span class="service__index" aria-hidden="true"><Icon name="edit" size={22} /></span>
+        <div>
+          <h3>Hai un'altra superficie da pulire?</h3>
+          <p>
+            Descrivila nel modulo, indicando dove si trova e quanto è grande: valutiamo la richiesta e ti
+            rispondiamo.
+          </p>
+          <a class="service__link" href="#preventivo">
+            Descrivi il lavoro
+            <Icon name="arrow-right" size={18} />
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .services__head .lead {
+    margin-top: 1.25rem;
+  }
+
+  .services__list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+    transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+
+  .service:hover {
+    border-color: var(--blue-200);
+    box-shadow: var(--shadow);
+  }
+
+  .service__media {
+    position: relative;
+    grid-column: 1 / -1;
+    margin: 0 0 0.25rem;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 4px);
+    aspect-ratio: 16 / 9;
+    background: var(--line);
+  }
+
+  .service__media :global(picture),
+  .service__media :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .service__media :global(img) {
+    object-fit: cover;
+    object-position: 50% 60%;
+  }
+
+  .service__media .tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .service__index {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 12px;
+    background: var(--navy-900);
+    color: var(--white);
+    font-size: 0.9375rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .service h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .service p {
+    margin-top: 0.5rem;
+    color: var(--muted);
+  }
+
+  .service__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .service__link:hover {
+    text-decoration: underline;
+  }
+
+  .service--open {
+    border-style: dashed;
+    border-color: var(--line-strong);
+    background: transparent;
+  }
+
+  .service--open .service__index {
+    background: var(--blue-100);
+    color: var(--blue-700);
+  }
+
+  @media (min-width: 1024px) {
+    .services__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      align-items: start;
+    }
+
+    .services__head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

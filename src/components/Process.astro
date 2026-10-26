@@ -1,0 +1,195 @@
+---
+import Icon from './Icon.astro';
+
+const steps = [
+  {
+    icon: 'edit',
+    title: 'Ci racconti il lavoro',
+    text: 'Compila il modulo o contattaci: dicci cosa va pulito, dove si trova e, se puoi, quanto è grande.',
+  },
+  {
+    icon: 'clipboard-check',
+    title: 'Valutiamo e ti mandiamo il preventivo',
+    text: 'Se serve ti chiediamo qualche dettaglio o una foto, poi ti proponiamo un preventivo per l’intervento.',
+  },
+  {
+    icon: 'calendar-check',
+    title: 'Fissiamo l’intervento',
+    text: 'Se il preventivo ti va bene, concordiamo insieme il giorno e ci occupiamo della pulizia.',
+  },
+] as const;
+
+const reasons = [
+  {
+    icon: 'users',
+    title: 'Rapporto diretto',
+    text: 'HydroJet è gestita da due ragazzi: ti confronti sempre con chi si occupa del lavoro.',
+  },
+  {
+    icon: 'camera',
+    title: 'Risultati documentati',
+    text: 'Mostriamo le foto reali dei nostri interventi, così puoi giudicare con i tuoi occhi.',
+  },
+  {
+    icon: 'clipboard-check',
+    title: 'Tutto chiaro prima di iniziare',
+    text: 'Concordiamo insieme cosa pulire e il preventivo prima di metterci al lavoro.',
+  },
+] as const;
+---
+
+<section class="section process on-dark" id="come-lavoriamo" aria-labelledby="process-title">
+  <div class="container">
+    <header class="process__head">
+      <p class="eyebrow">Come lavoriamo</p>
+      <h2 class="h2" id="process-title">Dalla richiesta al lavoro finito, in tre passaggi.</h2>
+    </header>
+
+    <ol class="steps">
+      {steps.map((step, index) => (
+        <li class="step">
+          <div class="step__top">
+            <span class="step__icon"><Icon name={step.icon} /></span>
+            <span class="step__num" aria-hidden="true">{index + 1}</span>
+          </div>
+          <h3>{step.title}</h3>
+          <p>{step.text}</p>
+        </li>
+      ))}
+    </ol>
+
+    <div class="why">
+      <h3 class="why__title" id="why-title">Perché scegliere HydroJet</h3>
+      <ul class="why__list">
+        {reasons.map((reason) => (
+          <li>
+            <Icon name={reason.icon} size={22} />
+            <div>
+              <h4>{reason.title}</h4>
+              <p>{reason.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .process {
+    color: rgb(255 255 255 / 0.78);
+    background:
+      radial-gradient(60% 70% at 0% 100%, rgb(14 98 160 / 0.35), transparent 70%),
+      var(--navy-900);
+  }
+
+  .process h2,
+  .process h3,
+  .process h4 {
+    color: var(--white);
+  }
+
+  .process__head {
+    max-width: 40rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .steps {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .step {
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border-radius: var(--radius);
+    background: rgb(255 255 255 / 0.04);
+    border: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  .step__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .step__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 12px;
+    background: var(--blue-600);
+    color: var(--white);
+  }
+
+  .step__num {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: rgb(255 255 255 / 0.12);
+  }
+
+  .step h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .step p {
+    margin-top: 0.625rem;
+  }
+
+  .why {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  .why__title {
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+
+  .why__list {
+    display: grid;
+    gap: 1.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .why__list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+  }
+
+  .why__list :global(svg) {
+    margin-top: 0.15rem;
+    color: var(--blue-300);
+  }
+
+  .why__list h4 {
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+
+  .why__list p {
+    margin-top: 0.35rem;
+  }
+
+  @media (min-width: 860px) {
+    .steps,
+    .why__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .why__list {
+      gap: 2.5rem;
+    }
+  }
+</style>

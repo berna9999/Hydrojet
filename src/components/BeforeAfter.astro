@@ -1,0 +1,386 @@
+---
+/**
+ * Confronto prima/dopo.
+ *
+ * Le foto hanno inquadrature diverse, quindi uno slider sovrapposto
+ * risulterebbe fuorviante: su desktop sono affiancate, su smartphone si
+ * alternano con un selettore (e con lo swipe). Senza JavaScript restano
+ * entrambe visibili una sotto l'altra. Ogni foto si può ingrandire.
+ */
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const states = [
+  { key: 'before', label: 'Prima', image: project.before },
+  { key: 'after', label: 'Dopo', image: project.after },
+] as const;
+const uid = `ba-${project.id}`;
+---
+
+<div class="ba" data-ba data-active="before">
+  <div class="ba__switch" role="group" aria-label="Mostra la foto">
+    {states.map((state) => (
+      <button
+        type="button"
+        class="ba__switch-btn"
+        aria-pressed={state.key === 'before' ? 'true' : 'false'}
+        aria-controls={`${uid}-${state.key}`}
+        data-ba-show={state.key}
+      >
+        {state.label}
+      </button>
+    ))}
+  </div>
+
+  <p class="ba__hint">Tocca «Dopo» o scorri la foto per vedere il risultato.</p>
+
+  <div class="ba__frames" data-ba-frames>
+    {states.map((state) => (
+      <figure class="ba__frame" id={`${uid}-${state.key}`} data-ba-frame={state.key}>
+        <button
+          type="button"
+          class="ba__zoom"
+          data-ba-open={state.key}
+          aria-label={`Ingrandisci la foto «${state.label}»`}
+        >
+          <Picture
+            src={state.image.src}
+            alt={state.image.alt}
+            formats={['avif', 'webp']}
+            widths={[360, 540, 720, 960]}
+            sizes="(min-width: 1024px) 380px, (min-width: 720px) 45vw, 92vw"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="ba__zoom-hint" aria-hidden="true"><Icon name="expand" size={18} /></span>
+        </button>
+        <figcaption class:list={['tag', state.key === 'after' && 'tag--light']}>{state.label}</figcaption>
+      </figure>
+    ))}
+  </div>
+
+  <dialog class="ba__dialog" data-ba-dialog aria-label={`${project.title}: foto ingrandita`}>
+    <div class="ba__dialog-bar">
+      <div class="ba__dialog-switch" role="group" aria-label="Foto da mostrare">
+        {states.map((state) => (
+          <button type="button" class="ba__switch-btn" data-ba-dialog-show={state.key} aria-pressed="false">
+            {state.label}
+          </button>
+        ))}
+      </div>
+      <button type="button" class="ba__dialog-close" data-ba-close>
+        <Icon name="close" size={22} />
+        <span class="visually-hidden">Chiudi</span>
+      </button>
+    </div>
+    {states.map((state) => (
+      <div class="ba__dialog-img" data-ba-dialog-img={state.key} hidden>
+        <Picture
+          src={state.image.src}
+          alt={state.image.alt}
+          formats={['avif', 'webp']}
+          widths={[720, 1080, 1440]}
+          sizes="(min-width: 1000px) 900px, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    ))}
+  </dialog>
+</div>
+
+<style>
+  .ba__switch,
+  .ba__hint {
+    display: none;
+  }
+
+  .ba__frames {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .ba__frame {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--line);
+    aspect-ratio: 4 / 5;
+    box-shadow: var(--shadow);
+  }
+
+  .ba__frame .tag {
+    position: absolute;
+    top: 0.875rem;
+    left: 0.875rem;
+    pointer-events: none;
+  }
+
+  .ba__zoom {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .ba__zoom :global(picture),
+  .ba__zoom :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ba__zoom :global(img) {
+    object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+
+  .ba__zoom:hover :global(img) {
+    transform: scale(1.025);
+  }
+
+  .ba__zoom:focus-visible {
+    outline-offset: -4px;
+    outline-color: var(--white);
+  }
+
+  .ba__zoom-hint {
+    position: absolute;
+    right: 0.875rem;
+    bottom: 0.875rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: rgb(5 23 38 / 0.7);
+    color: var(--white);
+    backdrop-filter: blur(6px);
+  }
+
+  /* Selettore Prima/Dopo */
+  .ba__switch-btn {
+    flex: 1;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.25rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.25s var(--ease), color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+
+  .ba__switch-btn[aria-pressed='true'] {
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm), 0 0 0 1px var(--line);
+  }
+
+  /* Smartphone con JavaScript: una foto alla volta, con dissolvenza */
+  @media (max-width: 719px) {
+    :global(.js) .ba__switch {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0.625rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--blue-100);
+    }
+
+    :global(.js) .ba__hint {
+      display: block;
+      margin: 0 0 0.875rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    :global(.js) .ba__frames {
+      grid-template-areas: 'stack';
+      touch-action: pan-y;
+    }
+
+    :global(.js) .ba__frame {
+      grid-area: stack;
+      transition: opacity 0.4s var(--ease), visibility 0.4s;
+    }
+
+    :global(.js) .ba[data-active='after'] [data-ba-frame='before'],
+    :global(.js) .ba[data-active='before'] [data-ba-frame='after'] {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @media (min-width: 720px) {
+    .ba__frames {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+  }
+
+  /* Ingrandimento */
+  .ba__dialog {
+    width: min(100vw - 2rem, 960px);
+    max-height: calc(100dvh - 2rem);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--navy-950);
+    color: var(--white);
+    overflow: hidden;
+  }
+
+  .ba__dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ba__dialog::backdrop {
+    background: rgb(5 23 38 / 0.82);
+    backdrop-filter: blur(4px);
+  }
+
+  .ba__dialog-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 0.625rem 0.625rem 0.75rem;
+  }
+
+  .ba__dialog-switch {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .ba__dialog-switch .ba__switch-btn {
+    min-height: 2.5rem;
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .ba__dialog-switch .ba__switch-btn[aria-pressed='true'] {
+    color: var(--ink);
+  }
+
+  .ba__dialog-close {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.08);
+    color: var(--white);
+    cursor: pointer;
+  }
+
+  .ba__dialog-close:hover {
+    background: rgb(255 255 255 / 0.16);
+  }
+
+  .ba__dialog-img {
+    min-height: 0;
+    flex: 1;
+    display: grid;
+    place-items: center;
+    background: #000;
+  }
+
+  .ba__dialog-img[hidden] {
+    display: none;
+  }
+
+  .ba__dialog-img :global(img) {
+    width: auto;
+    max-width: 100%;
+    max-height: calc(100dvh - 6rem);
+    object-fit: contain;
+  }
+</style>
+
+<script>
+  type State = 'before' | 'after';
+
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((root) => {
+    const show = (state: State) => {
+      root.dataset.active = state;
+      root.querySelectorAll<HTMLButtonElement>('[data-ba-show]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.baShow === state));
+      });
+    };
+
+    root.querySelectorAll<HTMLButtonElement>('[data-ba-show]').forEach((btn) => {
+      btn.addEventListener('click', () => show(btn.dataset.baShow as State));
+    });
+
+    // Swipe orizzontale sullo smartphone: sinistra → Dopo, destra → Prima.
+    const frames = root.querySelector<HTMLElement>('[data-ba-frames]');
+    let startX = 0;
+    let startY = 0;
+    let swiped = false;
+    frames?.addEventListener('pointerdown', (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      swiped = false;
+    });
+    frames?.addEventListener('pointerup', (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        show(dx < 0 ? 'after' : 'before');
+        swiped = true;
+      }
+    });
+
+    // Ingrandimento in finestra modale (Esc chiude, il focus torna al pulsante).
+    const dialog = root.querySelector<HTMLDialogElement>('[data-ba-dialog]');
+    if (!dialog) return;
+
+    const showInDialog = (state: State) => {
+      dialog.querySelectorAll<HTMLElement>('[data-ba-dialog-img]').forEach((el) => {
+        el.hidden = el.dataset.baDialogImg !== state;
+      });
+      dialog.querySelectorAll<HTMLButtonElement>('[data-ba-dialog-show]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.baDialogShow === state));
+      });
+    };
+
+    root.querySelectorAll<HTMLButtonElement>('[data-ba-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // Il click che chiude uno swipe non deve aprire l'ingrandimento.
+        if (swiped) {
+          swiped = false;
+          return;
+        }
+        showInDialog(btn.dataset.baOpen as State);
+        dialog.showModal();
+      });
+    });
+
+    dialog.querySelectorAll<HTMLButtonElement>('[data-ba-dialog-show]').forEach((btn) => {
+      btn.addEventListener('click', () => showInDialog(btn.dataset.baDialogShow as State));
+    });
+
+    dialog.querySelector('[data-ba-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+</script>

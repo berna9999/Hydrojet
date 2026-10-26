@@ -1,0 +1,95 @@
+---
+/**
+ * Barra fissa in basso su smartphone: compare dopo la hero e sparisce
+ * quando il modulo preventivo è già visibile.
+ */
+import Icon from './Icon.astro';
+import { whatsappHref } from '../config/site';
+
+const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
+---
+
+<div class="mobile-cta" data-mobile-cta hidden>
+  <a class="btn btn--block" href="#preventivo">
+    Richiedi un preventivo
+    <Icon name="arrow-right" class="icon-arrow" />
+  </a>
+  {whatsapp && (
+    <a class="mobile-cta__wa" href={whatsapp} target="_blank" rel="noopener" aria-label="Scrivici su WhatsApp">
+      <Icon name="whatsapp" size={24} />
+    </a>
+  )}
+</div>
+
+<style>
+  .mobile-cta {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 0.625rem;
+    padding: 0.75rem var(--gutter) calc(0.75rem + env(safe-area-inset-bottom));
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%);
+    transition: transform 0.35s var(--ease);
+  }
+
+  .mobile-cta[data-visible] {
+    transform: translateY(0);
+  }
+
+  .mobile-cta[hidden] {
+    display: none;
+  }
+
+  .mobile-cta__wa {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 999px;
+    background: #128c4b;
+    color: var(--white);
+  }
+
+  @media (min-width: 960px) {
+    .mobile-cta {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-mobile-cta]');
+  const hero = document.getElementById('top');
+  const contact = document.getElementById('preventivo');
+  const footer = document.querySelector('.site-footer');
+
+  if (bar && hero && contact && 'IntersectionObserver' in window) {
+    bar.hidden = false;
+    const seen = { hero: true, contact: false, footer: false };
+    const update = () => {
+      const visible = !seen.hero && !seen.contact && !seen.footer;
+      bar.toggleAttribute('data-visible', visible);
+      bar.toggleAttribute('inert', !visible);
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.target === hero) seen.hero = entry.isIntersecting;
+        if (entry.target === contact) seen.contact = entry.isIntersecting;
+        if (entry.target === footer) seen.footer = entry.isIntersecting;
+      });
+      update();
+    });
+    observer.observe(hero);
+    observer.observe(contact);
+    if (footer) observer.observe(footer);
+    update();
+  }
+</script>

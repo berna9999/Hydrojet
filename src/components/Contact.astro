@@ -1,0 +1,675 @@
+---
+import Icon from './Icon.astro';
+import { site, phoneHref, whatsappHref, hasDirectContact, areasLabel } from '../config/site';
+import { LIMITS } from '../lib/quote';
+
+const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
+
+const tips = [
+  'Che superficie è e, se lo sai, di che materiale',
+  `Dove si trova: ${areasLabel}`,
+  'Le dimensioni indicative',
+  'Quanto è sporca: macchie, muschio, colature…',
+];
+---
+
+<section class="section contact" id="preventivo" aria-labelledby="contact-title">
+  <div class="container contact__grid">
+    <div class="contact__intro">
+      <p class="eyebrow">Preventivo</p>
+      <h2 class="h2" id="contact-title">Raccontaci cosa c’è da pulire.</h2>
+      <p class="lead">
+        Compila il modulo: ti ricontattiamo ai recapiti che ci lasci per capire i dettagli e mandarti un
+        preventivo.
+      </p>
+
+      {hasDirectContact && (
+        <ul class="direct">
+          {phoneHref && (
+            <li>
+              <a href={phoneHref}>
+                <span class="direct__icon"><Icon name="phone" size={20} /></span>
+                <span><small>Telefono</small>{site.contact.phone}</span>
+              </a>
+            </li>
+          )}
+          {whatsapp && (
+            <li>
+              <a href={whatsapp} target="_blank" rel="noopener">
+                <span class="direct__icon direct__icon--wa"><Icon name="whatsapp" size={20} /></span>
+                <span><small>WhatsApp</small>{site.contact.whatsapp}</span>
+              </a>
+            </li>
+          )}
+          {site.contact.email && (
+            <li>
+              <a href={`mailto:${site.contact.email}`}>
+                <span class="direct__icon"><Icon name="mail" size={20} /></span>
+                <span><small>Email</small>{site.contact.email}</span>
+              </a>
+            </li>
+          )}
+        </ul>
+      )}
+
+      <div class="tips">
+        <h3>Cosa scriverci per un preventivo più preciso</h3>
+        <ul>
+          {tips.map((tip) => (
+            <li><Icon name="check" size={18} /> {tip}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form
+        class="quote-form"
+        action="/api/preventivo"
+        method="post"
+        novalidate
+        data-quote-form
+        aria-describedby="form-required-note"
+      >
+        <p id="form-required-note" class="form-note">I campi con * sono obbligatori.</p>
+
+        <div class="field">
+          <label for="q-name">Nome *</label>
+          <input
+            id="q-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            required
+            maxlength={LIMITS.name}
+            aria-describedby="q-name-error"
+          />
+          <p class="field__error" id="q-name-error" data-error-for="name"></p>
+        </div>
+
+        <fieldset class="field-group">
+          <legend>Come ti ricontattiamo? *</legend>
+          <p class="field__hint" id="q-contact-hint">Basta uno dei due.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="q-phone">Telefono</label>
+              <input
+                id="q-phone"
+                name="phone"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel"
+                maxlength={LIMITS.phone}
+                aria-describedby="q-contact-hint q-phone-error q-contact-error"
+              />
+              <p class="field__error" id="q-phone-error" data-error-for="phone"></p>
+            </div>
+            <div class="field">
+              <label for="q-email">Email</label>
+              <input
+                id="q-email"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                maxlength={LIMITS.email}
+                aria-describedby="q-contact-hint q-email-error q-contact-error"
+              />
+              <p class="field__error" id="q-email-error" data-error-for="email"></p>
+            </div>
+          </div>
+          <p class="field__error" id="q-contact-error" data-error-for="contact"></p>
+        </fieldset>
+
+        <fieldset class="field-group" aria-describedby="q-area-error">
+          <legend>Dove si trova la superficie? *</legend>
+          <div class="choices">
+            {site.areas.map((area, index) => (
+              <label class="choice">
+                <input type="radio" name="area" value={area} required={index === 0} />
+                <span><Icon name="map-pin" size={18} /> {area}</span>
+              </label>
+            ))}
+          </div>
+          <p class="field__error" id="q-area-error" data-error-for="area"></p>
+        </fieldset>
+
+        <div class="field">
+          <label for="q-message">Cosa c’è da pulire? *</label>
+          <textarea
+            id="q-message"
+            name="message"
+            rows="5"
+            required
+            maxlength={LIMITS.message}
+            placeholder="Es. muro in cemento lungo circa 15 metri, con colature e macchie scure."
+            aria-describedby="q-message-error"
+          ></textarea>
+          <p class="field__error" id="q-message-error" data-error-for="message"></p>
+        </div>
+
+        <div class="field field--check">
+          <label class="check">
+            <input type="checkbox" name="privacy" required aria-describedby="q-privacy-error" />
+            <span>
+              Ho letto l’<a href="/privacy" target="_blank" rel="noopener">informativa sulla privacy</a> e
+              accetto che i miei dati siano usati per rispondere alla richiesta. *
+            </span>
+          </label>
+          <p class="field__error" id="q-privacy-error" data-error-for="privacy"></p>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="q-website">Non compilare questo campo</label>
+          <input id="q-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="started_at" value="" data-started-at />
+
+        <div class="form-status" role="alert" aria-live="assertive" data-form-status hidden></div>
+
+        <button class="btn btn--block quote-form__submit" type="submit" data-submit>
+          <span data-submit-label>Invia la richiesta</span>
+          <Icon name="arrow-right" class="icon-arrow" />
+        </button>
+      </form>
+
+      <div class="form-success" data-form-success hidden tabindex="-1">
+        <span class="form-success__icon"><Icon name="check" size={28} /></span>
+        <h3>Richiesta inviata, grazie!</h3>
+        <p>Abbiamo ricevuto la tua richiesta. Ti ricontatteremo ai recapiti che ci hai lasciato.</p>
+        <button class="btn btn--outline" type="button" data-form-reset>Invia un’altra richiesta</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--surface);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .contact__intro .lead {
+    margin-top: 1.25rem;
+  }
+
+  .direct {
+    display: grid;
+    gap: 0.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .direct a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+
+  .direct a:hover {
+    border-color: var(--blue-200);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .direct small {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .direct__icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--blue-100);
+    color: var(--blue-700);
+  }
+
+  .direct__icon--wa {
+    background: #e7f8ee;
+    color: #128c4b;
+  }
+
+  .tips {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .tips h3 {
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tips ul {
+    display: grid;
+    gap: 0.6rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tips li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+
+  .tips :global(svg) {
+    flex: none;
+    margin-top: 0.3rem;
+    color: var(--blue-600);
+  }
+
+  /* Card modulo */
+  .form-card {
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .quote-form {
+    display: grid;
+    gap: 1.375rem;
+  }
+
+  .form-note {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .field label,
+  .field-group legend {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .field-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .field-group legend {
+    padding: 0;
+  }
+
+  .field__hint {
+    margin: 0.15rem 0 0.6rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .field-row {
+    display: grid;
+    gap: 1rem;
+  }
+
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  textarea {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--white);
+    font-size: 1rem;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+
+  textarea {
+    min-height: 8rem;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #7d8b98;
+  }
+
+  input:hover,
+  textarea:hover {
+    border-color: #a9bccb;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 4px rgb(27 123 191 / 0.18);
+  }
+
+  [aria-invalid='true'] {
+    border-color: var(--danger) !important;
+  }
+
+  .field__error {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--danger);
+  }
+
+  .field__error:empty {
+    display: none;
+  }
+
+  .field-group > .field__error {
+    margin-top: 0.5rem;
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+
+  .choice {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .choice input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .choice span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 12px;
+    font-weight: 700;
+    color: var(--text);
+    transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+
+  .choice span :global(svg) {
+    color: var(--muted);
+  }
+
+  .choice:hover span {
+    border-color: #a9bccb;
+  }
+
+  .choice input:checked + span {
+    border-color: var(--blue-600);
+    background: var(--blue-50);
+    color: var(--blue-700);
+  }
+
+  .choice input:checked + span :global(svg) {
+    color: var(--blue-600);
+  }
+
+  .choice input:focus-visible + span {
+    box-shadow: 0 0 0 4px rgb(27 123 191 / 0.25);
+  }
+
+  .field-group[data-invalid] .choice span {
+    border-color: var(--danger);
+  }
+
+  .check {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-weight: 500 !important;
+    font-size: 0.9375rem !important;
+    color: var(--text) !important;
+    cursor: pointer;
+  }
+
+  .check input {
+    flex: none;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin: 0.1rem 0 0;
+    accent-color: var(--blue-600);
+    cursor: pointer;
+  }
+
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-status {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--danger-bg);
+    color: var(--danger);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .form-status[hidden] {
+    display: none;
+  }
+
+  .form-status :global(svg) {
+    flex: none;
+    margin-top: 0.1rem;
+  }
+
+  .form-status :global(a) {
+    color: inherit;
+  }
+
+  .quote-form__submit {
+    min-height: 3.5rem;
+    font-size: 1.0625rem;
+  }
+
+  .form-success {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .form-success[hidden] {
+    display: none;
+  }
+
+  .form-success:focus {
+    outline: none;
+  }
+
+  .form-success__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  .form-success h3 {
+    font-size: 1.5rem;
+  }
+
+  @media (min-width: 560px) {
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+</style>
+
+<script>
+  import { readQuote, validateQuote, type FieldErrors } from '../lib/quote';
+  import { phoneHref, whatsappHref, site } from '../config/site';
+
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+  const success = document.querySelector<HTMLElement>('[data-form-success]');
+  const status = document.querySelector<HTMLElement>('[data-form-status]');
+  const submit = document.querySelector<HTMLButtonElement>('[data-submit]');
+  const submitLabel = document.querySelector<HTMLElement>('[data-submit-label]');
+  const startedAt = document.querySelector<HTMLInputElement>('[data-started-at]');
+
+  const ALERT_ICON =
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>';
+
+  // Recapiti diretti da suggerire se l'invio non va a buon fine.
+  const fallbackContacts = () => {
+    const links: string[] = [];
+    if (phoneHref) links.push(`<a href="${phoneHref}">chiamaci al ${site.contact.phone}</a>`);
+    const wa = whatsappHref();
+    if (wa) links.push(`<a href="${wa}" target="_blank" rel="noopener">scrivici su WhatsApp</a>`);
+    if (site.contact.email) links.push(`<a href="mailto:${site.contact.email}">scrivici a ${site.contact.email}</a>`);
+    return links.length ? ` In alternativa puoi ${links.join(' oppure ')}.` : ' Riprova più tardi.';
+  };
+
+  if (form && success && status && submit && submitLabel && startedAt) {
+    startedAt.value = String(Date.now());
+
+    const fieldsFor: Record<string, string[]> = {
+      name: ['name'],
+      phone: ['phone'],
+      email: ['email'],
+      contact: ['phone', 'email'],
+      area: ['area'],
+      message: ['message'],
+      privacy: ['privacy'],
+    };
+
+    const showErrors = (errors: FieldErrors, focusFirst = true) => {
+      form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
+        el.textContent = errors[el.dataset.errorFor as keyof FieldErrors] ?? '';
+      });
+
+      const invalid = new Set<string>();
+      Object.keys(errors).forEach((key) => fieldsFor[key]?.forEach((name) => invalid.add(name)));
+
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[name], textarea[name]').forEach((el) => {
+        if (el.type === 'hidden' || el.name === 'website') return;
+        if (el.type === 'radio') {
+          el.closest('fieldset')?.toggleAttribute('data-invalid', invalid.has(el.name));
+        } else {
+          el.setAttribute('aria-invalid', String(invalid.has(el.name)));
+        }
+      });
+
+      const firstKey = Object.keys(errors)[0];
+      if (focusFirst && firstKey) {
+        const name = fieldsFor[firstKey]?.[0];
+        form.querySelector<HTMLElement>(`[name="${name}"]`)?.focus();
+      }
+    };
+
+    const setStatus = (message: string | null) => {
+      status.hidden = !message;
+      status.innerHTML = message ? `${ALERT_ICON}<span>${message}</span>` : '';
+    };
+
+    const setLoading = (loading: boolean) => {
+      submit.disabled = loading;
+      submit.setAttribute('aria-busy', String(loading));
+      submitLabel.textContent = loading ? 'Invio in corso…' : 'Invia la richiesta';
+    };
+
+    // Dopo il primo tentativo di invio, gli errori si aggiornano mentre si scrive.
+    let attempted = false;
+    form.addEventListener('input', () => {
+      if (attempted) showErrors(validateQuote(readQuote(new FormData(form))), false);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setStatus(null);
+
+      attempted = true;
+      const data = new FormData(form);
+      const errors = validateQuote(readQuote(data));
+      showErrors(errors);
+      if (Object.keys(errors).length > 0) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        const result = await response.json().catch(() => null);
+
+        if (response.ok && result?.ok) {
+          form.hidden = true;
+          success.hidden = false;
+          success.focus();
+          return;
+        }
+
+        if (result?.errors) showErrors(result.errors);
+        setStatus(`${result?.message ?? 'Non siamo riusciti a inviare la richiesta.'}${fallbackContacts()}`);
+      } catch {
+        setStatus(`Connessione non riuscita: la richiesta non è stata inviata.${fallbackContacts()}`);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    document.querySelector('[data-form-reset]')?.addEventListener('click', () => {
+      form.reset();
+      attempted = false;
+      showErrors({}, false);
+      startedAt.value = String(Date.now());
+      success.hidden = true;
+      form.hidden = false;
+      form.querySelector<HTMLInputElement>('[name="name"]')?.focus();
+    });
+  }
+</script>

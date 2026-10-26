@@ -1,0 +1,53 @@
+---
+/**
+ * Logo HydroJet: simbolo vettoriale ricavato dal logo originale + nome.
+ * Il simbolo eredita il colore dal testo (currentColor).
+ */
+import markSvg from '../assets/brand/hydrojet-mark.svg?raw';
+
+interface Props {
+  href?: string;
+  class?: string;
+  showName?: boolean;
+}
+
+const { href = '/', class: className, showName = true } = Astro.props;
+---
+
+<a href={href} class:list={['logo', className]} aria-label="HydroJet — torna all'inizio">
+  <span class="logo__mark" aria-hidden="true" set:html={markSvg} />
+  {showName && <span class="logo__name">Hydro<span>Jet</span></span>}
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 6px;
+  }
+
+  .logo__mark {
+    display: block;
+    width: 2.6rem;
+    flex: none;
+  }
+
+  .logo__mark :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .logo__name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .logo__name span {
+    font-weight: 500;
+  }
+</style>

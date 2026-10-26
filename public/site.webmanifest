@@ -1,0 +1,19 @@
+{
+  "name": "HydroJet",
+  "short_name": "HydroJet",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#051726",
+  "background_color": "#051726",
+  "display": "browser"
+}

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TextPage from '../components/TextPage.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout title={`Richiesta inviata | ${site.name}`} base="/" noindex>
+  <TextPage
+    eyebrow="Preventivo"
+    title="Richiesta inviata, grazie!"
+    intro="Abbiamo ricevuto la tua richiesta. Ti ricontatteremo ai recapiti che ci hai lasciato."
+  >
+    <a class="btn" href="/">
+      Torna alla home
+      <Icon name="arrow-right" class="icon-arrow" />
+    </a>
+  </TextPage>
+</BaseLayout>

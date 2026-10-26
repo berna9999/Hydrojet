@@ -1,0 +1,103 @@
+---
+import Icon from './Icon.astro';
+import markSvg from '../assets/brand/hydrojet-mark.svg?raw';
+import { site, areasLabel } from '../config/site';
+---
+
+<section class="section coverage" id="zona" aria-labelledby="coverage-title">
+  <div class="container coverage__grid">
+    <header>
+      <p class="eyebrow">Zona di lavoro</p>
+      <h2 class="h2" id="coverage-title">Lavoriamo a {areasLabel}.</h2>
+      <p class="lead">
+        Quando ci scrivi, indica in quale località si trova la superficie da pulire: è il primo dato che
+        ci serve per valutare la richiesta.
+      </p>
+    </header>
+
+    <ul class="cities">
+      {site.areas.map((city) => (
+        <li class="city">
+          <span class="city__mark" aria-hidden="true" set:html={markSvg} />
+          <Icon name="map-pin" size={24} />
+          <span class="city__name">{city}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .coverage__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .coverage .lead {
+    margin-top: 1.25rem;
+    max-width: 34rem;
+  }
+
+  .cities {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .city {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5rem;
+    min-height: clamp(7.5rem, 16vw, 13rem);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--blue-700), var(--navy-900));
+    color: var(--white);
+  }
+
+  .city :global(svg) {
+    flex: none;
+    color: var(--blue-300);
+  }
+
+  .city__mark {
+    position: absolute;
+    z-index: -1;
+    right: -2.5rem;
+    bottom: -2.5rem;
+    width: 11rem;
+    opacity: 0.08;
+  }
+
+  .city__mark :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .city__name {
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  @media (min-width: 560px) {
+    .cities {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .coverage__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 4rem;
+    }
+  }
+</style>
