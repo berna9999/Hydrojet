@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { site, phoneHref, whatsappHref, hasDirectContact, areasLabel } from '../config/site';
+import { site, phones, whatsappHref, hasDirectContact, areasLabel } from '../config/site';
 import { LIMITS } from '../lib/quote';
 
 const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una pulizia.');
@@ -25,14 +25,14 @@ const tips = [
 
       {hasDirectContact && (
         <ul class="direct">
-          {phoneHref && (
+          {phones.map((phone) => (
             <li>
-              <a href={phoneHref}>
+              <a href={phone.href}>
                 <span class="direct__icon"><Icon name="phone" size={20} /></span>
-                <span><small>Telefono</small>{site.contact.phone}</span>
+                <span><small>Telefono</small>{phone.number}</span>
               </a>
             </li>
-          )}
+          ))}
           {whatsapp && (
             <li>
               <a href={whatsapp} target="_blank" rel="noopener">
@@ -551,7 +551,7 @@ const tips = [
 
 <script>
   import { readQuote, validateQuote, type FieldErrors } from '../lib/quote';
-  import { phoneHref, whatsappHref, site } from '../config/site';
+  import { phones, whatsappHref, site } from '../config/site';
 
   const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
@@ -566,10 +566,12 @@ const tips = [
   // Recapiti diretti da suggerire se l'invio non va a buon fine.
   const fallbackContacts = () => {
     const links: string[] = [];
-    if (phoneHref) links.push(`<a href="${phoneHref}">chiamaci al ${site.contact.phone}</a>`);
+    if (phones.length) {
+      links.push(`chiamarci al ${phones.map((p) => `<a href="${p.href}">${p.number}</a>`).join(' o al ')}`);
+    }
     const wa = whatsappHref();
-    if (wa) links.push(`<a href="${wa}" target="_blank" rel="noopener">scrivici su WhatsApp</a>`);
-    if (site.contact.email) links.push(`<a href="mailto:${site.contact.email}">scrivici a ${site.contact.email}</a>`);
+    if (wa) links.push(`<a href="${wa}" target="_blank" rel="noopener">scriverci su WhatsApp</a>`);
+    if (site.contact.email) links.push(`scriverci a <a href="mailto:${site.contact.email}">${site.contact.email}</a>`);
     return links.length ? ` In alternativa puoi ${links.join(' oppure ')}.` : ' Riprova più tardi.';
   };
 

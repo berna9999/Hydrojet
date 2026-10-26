@@ -16,12 +16,12 @@ export const site = {
   areas: ['Pesaro', 'Cattolica'] as const,
 
   contact: {
-    /** Numero di telefono in formato internazionale, es. '+39 333 123 4567'. */
-    phone: '',
+    /** Numeri di telefono in formato internazionale, es. '+39 333 123 4567'. */
+    phones: ['+39 333 400 0279', '+39 351 809 2157'] as string[],
     /** Numero WhatsApp in formato internazionale, es. '+39 333 123 4567'. */
     whatsapp: '',
     /** Email pubblica, es. 'info@hydrojet.it'. */
-    email: '',
+    email: 'hydrojet026@gmail.com',
     /** URL completo del profilo Instagram, es. 'https://www.instagram.com/hydrojet'. */
     instagram: '',
     /** URL completo della pagina Facebook. */
@@ -44,7 +44,10 @@ export type Site = typeof site;
 /** Rimuove spazi e simboli per costruire link tel: e wa.me. */
 export const digitsOnly = (value: string) => value.replace(/[^\d+]/g, '');
 
-export const phoneHref = site.contact.phone ? `tel:${digitsOnly(site.contact.phone)}` : '';
+/** Numeri di telefono pronti per i link tel:. */
+export const phones = site.contact.phones
+  .filter(Boolean)
+  .map((number) => ({ number, href: `tel:${digitsOnly(number)}` }));
 
 export const whatsappHref = (text?: string) => {
   if (!site.contact.whatsapp) return '';
@@ -54,7 +57,7 @@ export const whatsappHref = (text?: string) => {
 };
 
 export const hasDirectContact = Boolean(
-  site.contact.phone || site.contact.whatsapp || site.contact.email,
+  phones.length > 0 || site.contact.whatsapp || site.contact.email,
 );
 
 /** Elenco leggibile delle zone, es. "Pesaro e Cattolica". */

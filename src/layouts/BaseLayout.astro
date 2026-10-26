@@ -39,7 +39,7 @@ const localBusiness = {
   logo: logoUrl,
   image: ogImage,
   areaServed: site.areas.map((name) => ({ '@type': 'City', name })),
-  ...(site.contact.phone && { telephone: site.contact.phone }),
+  ...(site.contact.phones.length > 0 && { telephone: site.contact.phones[0] }),
   ...(site.contact.email && { email: site.contact.email }),
   ...(site.legal.vatNumber && { vatID: site.legal.vatNumber }),
   ...(sameAs.length > 0 && { sameAs }),

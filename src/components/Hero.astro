@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import Icon from './Icon.astro';
 import markSvg from '../assets/brand/hydrojet-mark.svg?raw';
-import { site, areasLabel, phoneHref, whatsappHref } from '../config/site';
+import { site, areasLabel, phones, whatsappHref } from '../config/site';
 import { projects } from '../data/projects';
 
 const featured = projects[0];
@@ -31,11 +31,12 @@ const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una puliz
         <a class="btn btn--outline-light" href="#risultati">Guarda prima e dopo</a>
       </div>
 
-      {(phoneHref || whatsapp) && (
+      {(phones.length > 0 || whatsapp) && (
         <p class="hero__direct">
-          Preferisci parlarci subito?
-          {phoneHref && <a href={phoneHref}>Chiama {site.contact.phone}</a>}
-          {phoneHref && whatsapp && <span aria-hidden="true"> · </span>}
+          <span>Preferisci parlarci subito? Chiamaci:</span>
+          {phones.map((phone) => (
+            <a href={phone.href}><Icon name="phone" size={16} /> {phone.number}</a>
+          ))}
           {whatsapp && <a href={whatsapp} target="_blank" rel="noopener">Scrivici su WhatsApp</a>}
         </p>
       )}
@@ -150,15 +151,36 @@ const whatsapp = whatsappHref('Ciao HydroJet, vorrei un preventivo per una puliz
   }
 
   .hero__direct {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 1.25rem;
     margin-top: 1.25rem;
     font-size: 0.9375rem;
     color: rgb(255 255 255 / 0.7);
   }
 
+  .hero__direct span {
+    flex-basis: 100%;
+  }
+
   .hero__direct a {
-    margin-left: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
     color: var(--white);
     font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .hero__direct a:hover {
+    text-decoration: underline;
+  }
+
+  .hero__direct :global(svg) {
+    color: var(--blue-300);
   }
 
   .hero__facts {

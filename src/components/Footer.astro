@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { navigation } from '../data/navigation';
-import { site, areasLabel, phoneHref, whatsappHref } from '../config/site';
+import { site, areasLabel, phones, whatsappHref } from '../config/site';
 
 interface Props {
   base?: string;
@@ -48,11 +48,11 @@ const legalLine = [site.legal.companyName, site.legal.address, site.legal.vatNum
         </ul>
       </div>
 
-      {(phoneHref || whatsapp || site.contact.email || socials.some((s) => s.href)) && (
+      {(phones.length > 0 || whatsapp || site.contact.email || socials.some((s) => s.href)) && (
         <div>
           <h2 class="site-footer__title">Contatti</h2>
           <ul>
-            {phoneHref && <li><a href={phoneHref}>{site.contact.phone}</a></li>}
+            {phones.map((phone) => <li><a href={phone.href}>{phone.number}</a></li>)}
             {whatsapp && <li><a href={whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>}
             {site.contact.email && <li><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></li>}
             {socials.filter((s) => s.href).map((s) => (
